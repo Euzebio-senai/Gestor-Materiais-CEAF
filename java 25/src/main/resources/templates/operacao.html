@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Registar ' + ${tipo}"></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 th:text="'REGISTAR ' + ${tipo}"></h2>
+            <a href="/menu" class="btn btn-outline-secondary">Voltar ao Menu</a>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">Adicionar Item à Lista</div>
+            <div class="card-body">
+                <form action="/operacao/add" method="post" class="row g-3 align-items-end">
+                    <input type="hidden" name="tipo" th:value="${tipo}">
+                    
+                    <div class="col-md-5">
+                        <label for="produtoId" class="form-label">ID do Item:</label>
+                        <input type="number" id="produtoId" name="produtoId" class="form-control" placeholder="Procure por ID" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="quantidade" class="form-label">Quantidade:</label>
+                        <input type="number" id="quantidade" name="quantidade" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-success w-100">Adicionar à Lista</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header">Itens para Registar</div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr> <th>ID</th> <th>Item</th> <th>Quantidade</th> </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${listaItens}">
+                            <td th:text="${item.id}">123</td>
+                            <td th:text="${item.nome}">Produto Teste</td>
+                            <td th:text="${item.qnt}">10</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listaItens)}">
+                            <td colspan="3" class="text-center text-muted">A lista está vazia.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <hr>
+
+                <form action="/operacao/processar" method="post">
+                    <input type="hidden" name="tipo" th:value="${tipo}">
+                    
+                    <div class="mb-3" th:if="${tipo == 'SAÍDA'}">
+                        <label for="nomeRetirante" class="form-label">Nome do Retirante:</label>
+                        <input type="text" id="nomeRetirante" name="nomeRetirante" class="form-control" required>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a th:href="@{/operacao/clear(tipo=${tipo})}" class="btn btn-outline-danger">Limpar Lista</a>
+                        <button type="submit" class="btn btn-primary btn-lg" 
+                                th:disabled="${#lists.isEmpty(listaItens)}">
+                            Registar <span th:text="${tipo}"></span> em Lote
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
